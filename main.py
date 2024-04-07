@@ -5,6 +5,7 @@ bot = telebot.TeleBot(api_key)
 
 @bot.message_handler(commands=["start"])
 def bot_start(message):
+    bot.send_message(message.chat.id, "Hello, " + message.from_user.first_name + "! Write 'KZT' or 'CNY' to convert your currency, or you can use /currency to see the actual currency.")
     currency_buttons(message)
 
 def currency_buttons(message):
@@ -27,21 +28,23 @@ def callback(call):
 global actual_kzt_currency
 actual_kzt_currency = 450
 def kzt_selected(message):
-    kzt_currency = message.text
-    if message.text.lower().startswith("kzt"):
-        kzt_currency = float(message.text.split(" ")[1])
-    usd_currency = float(kzt_currency) / actual_kzt_currency
-    bot.send_message(message.chat.id, f"🇰🇿 - {round(float(kzt_currency), 2)}₸ \n\n🇺🇸 - ${round(usd_currency, 2)}")
+    try:
+        kzt_currency = float(message.text.replace(",", ".").split(" ")[1])
+        usd_currency = kzt_currency / actual_kzt_currency
+        bot.send_message(message.chat.id, f"🇰🇿 - {round(kzt_currency, 2)}₸ \n\n🇺🇸 - ${round(usd_currency, 2)}")
+    except (ValueError, IndexError):
+        bot.send_message(message.chat.id, "Please enter a valid amount to convert to KZT.")
     currency_buttons(message)
 
 global actual_cny_currency
 actual_cny_currency = 7.24
 def cny_selected(message):
-    cny_currency = message.text
-    if message.text.lower().startswith("cny"):
-        cny_currency = float(message.text.split(" ")[1])
-    usd_currency = float(cny_currency) / actual_cny_currency
-    bot.send_message(message.chat.id, f"🇨🇳 - ￥{round(float(cny_currency), 2)} \n\n🇺🇸 - ${round(usd_currency, 2)}")
+    try:
+        cny_currency = float(message.text.replace(",", ".").split(" ")[1])
+        usd_currency = cny_currency / actual_cny_currency
+        bot.send_message(message.chat.id, f"🇨🇳 - ￥{round(cny_currency, 2)} \n\n🇺🇸 - ${round(usd_currency, 2)}")
+    except (ValueError, IndexError):
+        bot.send_message(message.chat.id, "Please enter a valid amount to convert to CNY.")
     currency_buttons(message)
 
 @bot.message_handler(commands=["currency"])
@@ -53,9 +56,9 @@ def bot_currency(message):
 
 @bot.message_handler(content_types=["text"])
 def bot_text(message):
-    if message.text.startswith("kzt"):
+    if message.text.lower().startswith("kzt"):
         kzt_selected(message)
-    elif message.text.startswith("cny"):
+    elif message.text.lower().startswith("cny"):
         cny_selected(message)
     else:
         bot.send_message(message.chat.id, "FORTNITE BALLS, I'M GAY, I LIKE BOYS")
