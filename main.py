@@ -29,7 +29,7 @@ global actual_kzt_currency
 actual_kzt_currency = 450
 def kzt_selected(message):
     try:
-        kzt_currency = float(message.text.replace(",", ".").split(" ")[1])
+        kzt_currency = float(message.text.replace(",", "."))
         usd_currency = kzt_currency / actual_kzt_currency
         bot.send_message(message.chat.id, f"🇰🇿 - {round(kzt_currency, 2)}₸ \n\n🇺🇸 - ${round(usd_currency, 2)}")
     except (ValueError, IndexError):
@@ -40,7 +40,7 @@ global actual_cny_currency
 actual_cny_currency = 7.24
 def cny_selected(message):
     try:
-        cny_currency = float(message.text.replace(",", ".").split(" ")[1])
+        cny_currency = float(message.text.replace(",", "."))
         usd_currency = cny_currency / actual_cny_currency
         bot.send_message(message.chat.id, f"🇨🇳 - ￥{round(cny_currency, 2)} \n\n🇺🇸 - ${round(usd_currency, 2)}")
     except (ValueError, IndexError):
@@ -57,8 +57,10 @@ def bot_currency(message):
 @bot.message_handler(content_types=["text"])
 def bot_text(message):
     if message.text.lower().startswith("kzt"):
+        message.text = message.text.lower().replace("kzt", "")
         kzt_selected(message)
     elif message.text.lower().startswith("cny"):
+        message.text = message.text.lower().replace("cny", "")
         cny_selected(message)
     else:
         bot.send_message(message.chat.id, "FORTNITE BALLS, I'M GAY, I LIKE BOYS")
