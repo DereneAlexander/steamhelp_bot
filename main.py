@@ -67,4 +67,5 @@ def bot_text(message):
 
 def main():
     bot.infinity_polling()
-main()
+if __name__ == "__main__":
+    main()
