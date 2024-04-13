@@ -47,7 +47,8 @@ def kzt_selected(message):
     try:
         kzt_currency = float(message.text.replace(",", "."))
         usd_currency = kzt_currency / actual_kzt_currency
-        bot.send_message(message.chat.id, f"🇰🇿 - {round(kzt_currency, 2)}₸ \n\n🇺🇸 - ${round(usd_currency, 2)}")
+        cny_currency = usd_currency * actual_cny_currency
+        bot.send_message(message.chat.id, f"🇰🇿 - {round(kzt_currency, 2)}₸ \n\n🇺🇸 - ${round(usd_currency, 2)} \n🇨🇳 - ￥{round(cny_currency, 2)}")
     except (ValueError, IndexError):
         bot.send_message(message.chat.id, "Please enter a valid amount to convert to KZT.")
     currency_buttons(message)
@@ -58,7 +59,8 @@ def cny_selected(message):
     try:
         cny_currency = float(message.text.replace(",", "."))
         usd_currency = cny_currency / actual_cny_currency
-        bot.send_message(message.chat.id, f"🇨🇳 - ￥{round(cny_currency, 2)} \n\n🇺🇸 - ${round(usd_currency, 2)}")
+        kzt_currency = usd_currency * actual_kzt_currency
+        bot.send_message(message.chat.id, f"🇨🇳 - ￥{round(cny_currency, 2)} \n\n🇺🇸 - ${round(usd_currency, 2)} \n🇰🇿 - {round(kzt_currency, 2)}₸")
     except (ValueError, IndexError):
         bot.send_message(message.chat.id, "Please enter a valid amount to convert to CNY.")
     currency_buttons(message)
@@ -67,8 +69,9 @@ def cny_selected(message):
 def bot_currency(message):
     actual_currency = "🇺🇸 - $1.00 \n\n"
     actual_currency += f"🇰🇿 - {actual_kzt_currency}₸\n"
-    actual_currency += f"🇨🇳 - {actual_cny_currency}￥"
+    actual_currency += f"🇨🇳 - ￥{actual_cny_currency}"
     bot.send_message(message.chat.id, actual_currency)
+    currency_buttons(message)
 
 @bot.message_handler(content_types=["text"])
 def bot_text(message):
@@ -83,6 +86,7 @@ def bot_text(message):
         cny_selected(message)
     else:
         bot.send_message(message.chat.id, "FORTNITE BALLS, I'M GAY, I LIKE BOYS")
+        bot.send_sticker(message.chat.id, sticker="CAACAgIAAxkBAAEL55xmGj3ZzKjx1Udr9aOqlaBOcxSyLgACKT4AAhje2UsLi8QhP0nSNjQE")
         currency_buttons(message)
 
 def main():
